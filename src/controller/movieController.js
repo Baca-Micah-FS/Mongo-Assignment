@@ -26,6 +26,20 @@ const getMoviesbyId = async (request, response) => {
   }
 };
 
+const getMoviesByDirectorId = async (request, response) => {
+  try {
+    const directorId = request.params.directorId;
+    const movies = await Movie.find({ director: directorId });
+    response.status(200).json({
+      message: `${request.method} Get Movies by Director Id`,
+      success: true,
+      movies: movies,
+    });
+  } catch (error) {
+    response.status(400).json({ message: error.message, success: false });
+  }
+};
+
 const createMovies = async (request, response) => {
   try {
     const movie = await Movie.create(request.body);
@@ -72,6 +86,7 @@ const deleteMovies = async (request, response) => {
 module.exports = {
   getAllMovies,
   getMoviesbyId,
+  getMoviesByDirectorId,
   updateMovies,
   deleteMovies,
   createMovies,

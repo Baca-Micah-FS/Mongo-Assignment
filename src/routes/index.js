@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const movieRoutes = require("./movieRoutes");
-
+const directorRoutes = require("./directorRoutes");
 // OR
 // const router = require("express").Router
 
@@ -13,4 +13,6 @@ router.get("/", (request, response) => {
 });
 
 router.use("/movies", movieRoutes);
+router.use("/directors", directorRoutes);
+
 module.exports = router;

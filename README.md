@@ -3,5 +3,5 @@
 ### Run application
 
 ```bash
-npm run dev
+npm run start
 ```

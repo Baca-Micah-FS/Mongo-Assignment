@@ -6,6 +6,7 @@ const {
   updateMovies,
   deleteMovies,
   createMovies,
+  getMoviesByDirectorId,
 } = require("../controller/movieController");
 
 let books = [];
@@ -13,6 +14,8 @@ let books = [];
 router.get("/:id", getMoviesbyId);
 
 router.get("/", getAllMovies);
+
+router.get("/byDirectorId/:directorId", getMoviesByDirectorId);
 
 router.post("/", createMovies);
 

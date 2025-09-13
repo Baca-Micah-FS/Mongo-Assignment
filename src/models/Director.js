@@ -5,21 +5,24 @@ const directorSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
+      unique: true,
+      minLength: [2, "Name must be longer than 2 characters"],
       maxlength: [50, "Name can't be longer than 50 characters"],
     },
     birthDate: {
-      type: Number,
-      require: true,
+      type: Date,
+      required: true,
     },
 
     moviesDirected: {
       type: Number,
-      require: true,
+      required: true,
     },
 
     retired: {
       type: Boolean,
-      reuired: true,
+      required: true,
     },
   },
   // replacing of Date.now. Gives created at and updated at
