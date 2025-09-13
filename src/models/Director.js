@@ -1,36 +1,29 @@
 const mongoose = require("mongoose");
-const Director = require("./Director");
 
-// movie schema
-const movieSchema = new mongoose.Schema(
+const directorSchema = new mongoose.Schema(
   {
-    // movie title
-    title: {
+    name: {
       type: String,
       required: true,
       maxlength: [50, "Name can't be longer than 50 characters"],
     },
-    rating: {
+    birthDate: {
       type: Number,
       require: true,
     },
 
-    genre: {
-      type: String,
+    moviesDirected: {
+      type: Number,
       require: true,
     },
 
-    releaseDate: {
-      type: Date,
+    retired: {
+      type: Boolean,
       reuired: true,
-    },
-    director: {
-      type: Director,
-      required: true,
     },
   },
   // replacing of Date.now. Gives created at and updated at
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Movie", movieSchema);
+module.exports = mongoose.model("Director", directorSchema);
