@@ -3,6 +3,11 @@ const Movie = require("../models/Movie");
 const getAllMovies = async (request, response) => {
   try {
     const movies = await Movie.find({});
+    //   .select(["title", "rating", "genre", "releaseDate", "director"])
+    //   .populate({
+    //     path: "director",
+    //     select: ["name", "birthDate", "moviesDirected", "retired"],
+    //   });
     response.status(200).json({
       message: `${request.method} verb to the Movie controller`,
       movies: movies,
@@ -16,6 +21,11 @@ const getAllMovies = async (request, response) => {
 const getMoviesbyId = async (request, response) => {
   try {
     const movie = await Movie.findById(request.params.id);
+    //   .select("title", "rating", "genre", "releaseDate", "director")
+    //   .populate({
+    //     path: "director",
+    //     select: ["name", "birthDate", "moviesDirected", "retired"],
+    //   });
     response.status(200).json({
       message: `${request.method} Get Movies by ID`,
       movie: movie,
@@ -30,6 +40,11 @@ const getMoviesByDirectorId = async (request, response) => {
   try {
     const directorId = request.params.directorId;
     const movies = await Movie.find({ director: directorId });
+    //   .select(["title", "rating", "genre", "releaseDate", "director"])
+    //   .populate({
+    //     path: "director",
+    //     select: ["name", "birthDate", "moviesDirected", "retired"],
+    //   });
     response.status(200).json({
       message: `${request.method} Get Movies by Director Id`,
       success: true,
@@ -43,6 +58,11 @@ const getMoviesByDirectorId = async (request, response) => {
 const createMovies = async (request, response) => {
   try {
     const movie = await Movie.create(request.body);
+    //   .select(["title", "rating", "genre", "releaseDate", "director"])
+    //   .populate({
+    //     path: "director",
+    //     select: ["name", "birthDate", "moviesDirected", "retired"],
+    //   });
     response.status(200).json({
       message: `${request.method} Create Movies`,
       success: true,
@@ -62,6 +82,11 @@ const updateMovies = async (request, response) => {
         new: true,
       }
     );
+    //   .select(["title", "rating", "genre", "releaseDate", "director"])
+    //   .populate({
+    //     path: "director",
+    //     select: ["name", "birthDate", "moviesDirected", "retired"],
+    //   });
     response.status(200).json({
       message: `${request.method} Update Movies`,
       success: true,
