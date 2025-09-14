@@ -1,5 +1,9 @@
 const Director = require("../models/Director");
 const Messages = require("../models/Messages");
+
+// mongoose import for .isValidObjectId
+const mongoose = require("mongoose");
+
 const getAllDirectors = async (request, response) => {
   try {
     const director = await Director.find({});
@@ -12,7 +16,7 @@ const getAllDirectors = async (request, response) => {
     response.status(200).json({
       message: `${request.method} ${Messages.successfulDirectorMessage}`,
       director: director,
-      sucess: true,
+      success: true,
     });
   } catch (error) {
     response.status(400).json({ message: error.message, success: false });
@@ -21,7 +25,14 @@ const getAllDirectors = async (request, response) => {
 
 const getDirectorsbyId = async (request, response) => {
   try {
-    const director = await Director.findById(request.params.id);
+    const { id } = request.params;
+    // Practicing using .isValidObjectId to prevent cast errors. Without check it could return a 500 bad request instead of a 400 status code.
+    if (!mongoose.isValidObjectId(id)) {
+      return response
+        .status(400)
+        .json({ messages: Messages.invalidDirectorId, success: false });
+    }
+    const director = await Director.findById(id);
     // .select([
     //   "name",
     //   "birthDate",
@@ -30,7 +41,7 @@ const getDirectorsbyId = async (request, response) => {
     // ]);
     // TO DO: Figure out if need to validate length of ID before calling FindById
     if (director == null) {
-      response.status(200).json({
+      return response.status(404).json({
         message: `${request.method} ${Messages.notFound}`,
         success: false,
       });
@@ -73,6 +84,7 @@ const updateDirectors = async (request, response) => {
       request.body,
       {
         new: true,
+        runValidators: true,
       }
     );
     // .select(["name", "birthDate", "moviesDirected", "retired"]);
@@ -81,6 +93,18 @@ const updateDirectors = async (request, response) => {
     //   success: true,
     //   director: director,
     // });
+
+    if (!director) {
+      return response
+        .status(404)
+        .json({ message: Messages.directorNotFound, success: false });
+    }
+
+    return response.status(200).json({
+      message: `${request.method} ${Messages.successfulDirectorMessage}`,
+      success: true,
+      director: director,
+    });
   } catch (error) {
     response.status(400).json({ message: error.message, success: false });
   }
@@ -88,8 +112,13 @@ const updateDirectors = async (request, response) => {
 
 const deleteDirectors = async (request, response) => {
   try {
-    await Director.findByIdAndDelete(request.params.id);
-    response.status(200).json({
+    const deleted = await Director.findByIdAndDelete(request.params.id);
+    if (!deleted) {
+      return response
+        .status(404)
+        .json({ message: Messages.directorNotFound, success: false });
+    }
+    return response.status(200).json({
       message: `${request.method} ${Messages.successfulDirectorMessage}`,
       success: true,
     });

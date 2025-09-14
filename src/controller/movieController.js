@@ -1,4 +1,5 @@
 const Movie = require("../models/Movie");
+const Messages = require("../models/Messages");
 
 const getAllMovies = async (request, response) => {
   try {
@@ -9,9 +10,9 @@ const getAllMovies = async (request, response) => {
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
     response.status(200).json({
-      message: `${request.method} verb to the Movie controller`,
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
       movies: movies,
-      sucess: true,
+      success: true,
     });
   } catch (error) {
     response.status(400).json({ message: error.message, success: false });
@@ -26,8 +27,15 @@ const getMoviesbyId = async (request, response) => {
     //     path: "director",
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
+
+    if (!movie) {
+      return response
+        .status(404)
+        .json({ message: Messages.movieNotFound, success: false });
+    }
+
     response.status(200).json({
-      message: `${request.method} Get Movies by ID`,
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
       movie: movie,
       success: true,
     });
@@ -46,7 +54,7 @@ const getMoviesByDirectorId = async (request, response) => {
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
     response.status(200).json({
-      message: `${request.method} Get Movies by Director Id`,
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,
       movies: movies,
     });
@@ -64,7 +72,7 @@ const createMovies = async (request, response) => {
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
     response.status(200).json({
-      message: `${request.method} Create Movies`,
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,
       movie: movie,
     });
@@ -80,6 +88,7 @@ const updateMovies = async (request, response) => {
       request.body,
       {
         new: true,
+        runValidators: true,
       }
     );
     //   .select(["title", "rating", "genre", "releaseDate", "director"])
@@ -87,8 +96,15 @@ const updateMovies = async (request, response) => {
     //     path: "director",
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
+
+    if (!movie) {
+      return response
+        .status(404)
+        .json({ message: Messages.movieNotFound, success: false });
+    }
+
     response.status(200).json({
-      message: `${request.method} Update Movies`,
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,
       movie: movie,
     });
@@ -99,10 +115,18 @@ const updateMovies = async (request, response) => {
 
 const deleteMovies = async (request, response) => {
   try {
-    await Movie.findByIdAndDelete(request.params.id);
-    response
+    const deleted = await Movie.findByIdAndDelete(request.params.id);
+    if (!deleted) {
+      return response
+        .status(404)
+        .json({ message: Messages.movieNotFound, success: false });
+    }
+    return response
       .status(200)
-      .json({ message: `${request.method} Delete Movies`, success: true });
+      .json({
+        message: `${request.method} ${Messages.successfulMovieMessage}`,
+        success: true,
+      });
   } catch (error) {
     response.status(400).json({ message: error.message, success: false });
   }

@@ -21,7 +21,8 @@ const movieSchema = new mongoose.Schema(
     },
 
     genre: {
-      type: String,
+      // Wrap all type "strings" in "[]" if they are related to an enum with multiple values/strings
+      type: [String],
       required: true,
       trim: true,
       enum: ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Other"],
@@ -32,6 +33,7 @@ const movieSchema = new mongoose.Schema(
       required: true,
     },
     director: {
+      // ref defines the "has a" relationship between every movie "has a" director
       type: mongoose.Schema.Types.ObjectId,
       ref: "Director",
       required: true,
