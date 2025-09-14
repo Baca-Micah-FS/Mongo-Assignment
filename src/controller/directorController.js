@@ -42,7 +42,7 @@ const getDirectorsbyId = async (request, response) => {
     // TO DO: Figure out if need to validate length of ID before calling FindById
     if (director == null) {
       return response.status(404).json({
-        message: `${request.method} ${Messages.notFound}`,
+        message: `${Messages.directorNotFound}`,
         success: false,
       });
     } else {
@@ -73,7 +73,7 @@ const createDirectors = async (request, response) => {
       director: director,
     });
   } catch (error) {
-    response.status(400).json({ message: error.message, success: false });
+    response.status(400).json({ message: Messages.badRequest, success: false });
   }
 };
 

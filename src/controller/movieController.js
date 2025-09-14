@@ -9,6 +9,7 @@ const getAllMovies = async (request, response) => {
     //     path: "director",
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
+
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
       movies: movies,
@@ -40,7 +41,9 @@ const getMoviesbyId = async (request, response) => {
       success: true,
     });
   } catch (error) {
-    response.status(400).json({ message: error.message, success: false });
+    response
+      .status(400)
+      .json({ message: Messages.movieNotFound, success: false });
   }
 };
 
@@ -53,13 +56,21 @@ const getMoviesByDirectorId = async (request, response) => {
     //     path: "director",
     //     select: ["name", "birthDate", "moviesDirected", "retired"],
     //   });
+    if (!movies) {
+      return response
+        .status(404)
+        .json({ message: Messages.movieNotFound, success: false });
+    }
+
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,
       movies: movies,
     });
   } catch (error) {
-    response.status(400).json({ message: error.message, success: false });
+    response
+      .status(400)
+      .json({ message: Messages.movieNotFound, success: false });
   }
 };
 
@@ -77,7 +88,7 @@ const createMovies = async (request, response) => {
       movie: movie,
     });
   } catch (error) {
-    response.status(400).json({ message: error.message, success: false });
+    response.status(400).json({ message: Messages.badRequest, success: false });
   }
 };
 
@@ -121,14 +132,14 @@ const deleteMovies = async (request, response) => {
         .status(404)
         .json({ message: Messages.movieNotFound, success: false });
     }
-    return response
-      .status(200)
-      .json({
-        message: `${request.method} ${Messages.successfulMovieMessage}`,
-        success: true,
-      });
+    return response.status(200).json({
+      message: `${request.method} ${Messages.successfulMovieMessage}`,
+      success: true,
+    });
   } catch (error) {
-    response.status(400).json({ message: error.message, success: false });
+    response
+      .status(400)
+      .json({ message: Messages.movieNotFound, success: false });
   }
 };
 
