@@ -26,7 +26,7 @@ const directorSchema = new mongoose.Schema(
       required: true,
     },
 
-    movie: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
+    movies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
   },
   // replacing of Date.now. Gives created at and updated at
   { timestamps: true }

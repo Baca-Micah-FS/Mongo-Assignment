@@ -1,14 +1,15 @@
 const Movie = require("../models/Movie");
+const Director = require("../models/Director");
 const Messages = require("../models/Messages");
 
 const getAllMovies = async (request, response) => {
   try {
-    const movies = await Movie.find({});
-    //   .select(["title", "rating", "genre", "releaseDate", "director"])
-    //   .populate({
-    //     path: "director",
-    //     select: ["name", "birthDate", "moviesDirected", "retired"],
-    //   });
+    const movies = await Movie.find({})
+      .select(["title", "rating", "genre", "releaseDate", "directors"])
+      .populate({
+        path: "directors",
+        select: ["name", "birthDate", "moviesDirected", "retired"],
+      });
 
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
@@ -22,12 +23,12 @@ const getAllMovies = async (request, response) => {
 
 const getMoviesbyId = async (request, response) => {
   try {
-    const movie = await Movie.findById(request.params.id);
-    //   .select("title", "rating", "genre", "releaseDate", "director")
-    //   .populate({
-    //     path: "director",
-    //     select: ["name", "birthDate", "moviesDirected", "retired"],
-    //   });
+    const movie = await Movie.findById(request.params.id)
+      .select(["title", "rating", "genre", "releaseDate", "directors"])
+      .populate({
+        path: "directors",
+        select: ["name", "birthDate", "moviesDirected", "retired"],
+      });
 
     if (!movie) {
       return response
@@ -50,12 +51,12 @@ const getMoviesbyId = async (request, response) => {
 const getMoviesByDirectorId = async (request, response) => {
   try {
     const directorId = request.params.directorId;
-    const movies = await Movie.find({ director: directorId });
-    //   .select(["title", "rating", "genre", "releaseDate", "director"])
-    //   .populate({
-    //     path: "director",
-    //     select: ["name", "birthDate", "moviesDirected", "retired"],
-    //   });
+    const movies = await Movie.find({ director: directorId })
+      .select(["title", "rating", "genre", "releaseDate", "directors"])
+      .populate({
+        path: "directors",
+        select: ["name", "birthDate", "moviesDirected", "retired"],
+      });
     if (!movies) {
       return response
         .status(404)
@@ -76,16 +77,31 @@ const getMoviesByDirectorId = async (request, response) => {
 
 const createMovies = async (request, response) => {
   try {
-    const movie = await Movie.create(request.body);
-    //   .select(["title", "rating", "genre", "releaseDate", "director"])
-    //   .populate({
-    //     path: "director",
-    //     select: ["name", "birthDate", "moviesDirected", "retired"],
-    //   });
+    const { movie } = request.body;
+
+    const director = await Director.findById(movie.directors);
+
+    movie.directors = director;
+
+    const movieData = new Movie(movie);
+
+    director.movies.push(movieData._id);
+
+    const queries = [movieData.save(), director.save()];
+
+    await Promise.all(queries);
+
+    const movieResult = await Movie.findById(movieData._id)
+      .select(["title", "rating", "genre", "releaseDate", "directors"])
+      .populate({
+        path: "directors",
+        select: ["name", "birthDate", "moviesDirected", "retired"],
+      });
+
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,
-      movie: movie,
+      data: movieResult,
     });
   } catch (error) {
     response.status(400).json({ message: Messages.badRequest, success: false });
@@ -101,12 +117,12 @@ const updateMovies = async (request, response) => {
         new: true,
         runValidators: true,
       }
-    );
-    //   .select(["title", "rating", "genre", "releaseDate", "director"])
-    //   .populate({
-    //     path: "director",
-    //     select: ["name", "birthDate", "moviesDirected", "retired"],
-    //   });
+    )
+      .select(["title", "rating", "genre", "releaseDate", "directors"])
+      .populate({
+        path: "directors",
+        select: ["name", "birthDate", "moviesDirected", "retired"],
+      });
 
     if (!movie) {
       return response
