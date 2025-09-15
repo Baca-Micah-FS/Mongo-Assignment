@@ -51,7 +51,7 @@ const getMoviesbyId = async (request, response) => {
 const getMoviesByDirectorId = async (request, response) => {
   try {
     const directorId = request.params.directorId;
-    const movies = await Movie.find({ director: directorId })
+    const movies = await Movie.find({ directors: directorId })
       .select(["title", "rating", "genre", "releaseDate", "directors"])
       .populate({
         path: "directors",
