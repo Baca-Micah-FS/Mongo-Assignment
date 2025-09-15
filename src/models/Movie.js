@@ -37,7 +37,6 @@ const movieSchema = new mongoose.Schema(
         // ref defines the "has a" relationship between every movie "has a" director
         type: mongoose.Schema.Types.ObjectId,
         ref: "Director",
-        required: true,
       },
     ],
   },
