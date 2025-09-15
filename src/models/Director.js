@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Movie = require("./Movie");
 
 const directorSchema = new mongoose.Schema(
   {
@@ -24,6 +25,10 @@ const directorSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+
+    movie: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Movie", required: true },
+    ],
   },
   // replacing of Date.now. Gives created at and updated at
   { timestamps: true }

@@ -32,12 +32,14 @@ const movieSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    director: {
-      // ref defines the "has a" relationship between every movie "has a" director
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Director",
-      required: true,
-    },
+    director: [
+      {
+        // ref defines the "has a" relationship between every movie "has a" director
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Director",
+        required: true,
+      },
+    ],
   },
   // replacing of Date.now. Gives created at and updated at
   { timestamps: true }
