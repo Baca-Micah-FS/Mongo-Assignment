@@ -3,3 +3,11 @@
 .env
 
 node_modules
+
+src/controller/movieController.js
+src/controller/directorController.js
+src/models/Movie.js
+src/models/Director.js
+src/models/Messages.js
+src/routes/movieRoutes.js
+src/routes/directorRoutes.js
