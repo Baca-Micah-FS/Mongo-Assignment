@@ -11,3 +11,4 @@ src/models/Director.js
 src/models/Messages.js
 src/routes/movieRoutes.js
 src/routes/directorRoutes.js
+postman/
