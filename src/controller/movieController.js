@@ -1,7 +1,7 @@
 const Movie = require("../models/Movie");
 const Director = require("../models/Director");
 const Messages = require("../models/Messages");
-
+// silly little comment
 const getAllMovies = async (request, response) => {
   try {
     const movies = await Movie.find({})
