@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "958e36a4-6d9a-4d0a-9f48-03f63e3154c2",
+		"name": "Movies",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "48121817",
+		"_collection_link": "https://mjbaca-738a47bb-4287991.postman.co/workspace/Micah's-Workspace~dcfe74e9-aec6-4d2d-8eee-7cf9ca6fa4f1/collection/48121817-958e36a4-6d9a-4d0a-9f48-03f63e3154c2?action=share&source=collection_link&creator=48121817"
+	},
+	"item": [
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "getMovies",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesSortDesc",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Sorted descending by rating\", () => {",
+									"  const json = pm.response.json();",
+									"  const list = Array.isArray(json) ? json : (json.movies || json.data || []);",
+									"  const vals = list.map(x => x.rating).filter(v => v !== undefined);",
+									"  const sorted = [...vals].sort((a,b) => b - a);",
+									"  pm.expect(vals).to.eql(sorted);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/movies?sort=-rating&limit=5\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "-rating"
+								},
+								{
+									"key": "limit",
+									"value": "5\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesSortAscending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Sorted ascending by rating\", () => {",
+									"  const json = pm.response.json();",
+									"  const list = Array.isArray(json) ? json : (json.movies || json.data || []);",
+									"  const vals = list.map(x => x.rating).filter(v => v !== undefined);",
+									"  const sorted = [...vals].sort((a,b) => a - b);",
+									"  pm.expect(vals).to.eql(sorted);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/movies?sort=rating&limit=5\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "rating"
+								},
+								{
+									"key": "limit",
+									"value": "5\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesPage2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Page 2 respects limit and is not same as Page 1 first item\", () => {",
+									"  const json = pm.response.json();",
+									"  const list = Array.isArray(json) ? json : (json.movies || json.data || []);",
+									"  pm.expect(list.length).to.be.at.most(2);",
+									"  const p1id = pm.environment.get(\"page1_firstId\");",
+									"  if (p1id && list.length) {",
+									"    pm.expect(list[0]._id || list[0].id).to.not.eql(p1id);",
+									"  }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/movies?sort=_id&limit=2&page=2\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "_id"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "page",
+									"value": "2\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesPage1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Page 1 respects limit and stores first id\", () => {",
+									"  const json = pm.response.json();",
+									"  const list = Array.isArray(json) ? json : (json.movies || json.data || []);",
+									"  pm.expect(list.length).to.be.at.most(2);",
+									"  if (list.length) {",
+									"    pm.environment.set(\"page1_firstId\", list[0]._id || list[0].id);",
+									"  }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/movies?sort=_id&limit=2&page=1\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "_id"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "page",
+									"value": "1\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesFilter&Select",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Returns docs with only selected fields available\", () => {",
+									"  const json = pm.response.json();",
+									"  const list = Array.isArray(json) ? json : (json.movies || json.data || []);",
+									"  pm.expect(list).to.be.an(\"array\");",
+									"  if (list.length) {",
+									"    const m = list[0];",
+									"    pm.expect(m).to.have.property(\"_id\");",
+									"    pm.expect(m).to.have.property(\"title\");",
+									"    pm.expect(m).to.have.property(\"rating\");",
+									"  }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/movies?rateMin=3&select=title,rating&limit=3\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "rateMin",
+									"value": "3"
+								},
+								{
+									"key": "select",
+									"value": "title,rating"
+								},
+								{
+									"key": "limit",
+									"value": "3\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "putMovies",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "postMovies",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMovies",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getMoviesByDirectorId",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
