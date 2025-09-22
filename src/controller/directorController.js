@@ -7,12 +7,36 @@ const mongoose = require("mongoose");
 
 const getAllDirectors = async (request, response) => {
   try {
-    const director = await Director.find({})
-      .select(["name", "birthDate", "moviesDirected", "retired"])
+    const { moviesMin, moviesMax, select } = request.query;
+
+    const filter = {};
+
+    if (moviesMin || moviesMax) {
+      filter.moviesDirected = {};
+      if (moviesMin) filter.moviesDirected.$gte = Number(moviesMin);
+      if (moviesMax) filter.moviesDirected.$lte = Number(moviesMax);
+    }
+
+    let selectObject;
+    if (select) {
+      selectObject = select.split(",").join(" ");
+    }
+
+    const page = parseInt(request.query.page) || 1;
+    const limit = parseInt(request.query.limit) || 2;
+    const skip = (page - 1) * limit;
+
+    const director = await Director.find(filter)
+      .select(
+        selectObject || ["name", "birthDate", "moviesDirected", "retired"]
+      )
       .populate({
         path: "movies",
         select: ["title", "rating", "genre", "releaseDate", "directors"],
-      });
+      })
+
+      .skip(skip)
+      .limit(limit);
     response.status(200).json({
       message: `${request.method} ${Messages.successfulDirectorMessage}`,
       director: director,

@@ -4,12 +4,42 @@ const Messages = require("../models/Messages");
 
 const getAllMovies = async (request, response) => {
   try {
-    const movies = await Movie.find({})
-      .select(["title", "rating", "genre", "releaseDate", "directors"])
+    const { rateMin, rateMax, select, sort } = request.query;
+
+    const filter = {};
+
+    if (rateMin || rateMax) {
+      filter.rating = {};
+
+      if (rateMin) filter.rating.$gte = Number(rateMin);
+      if (rateMax) filter.rating.$lte = Number(rateMax);
+    }
+
+    let selectObject;
+
+    if (select) {
+      selectObject = select.split(",").join(" ");
+    }
+
+    let sortObject;
+
+    if (sort) {
+      sortObject = sort.split(",").join(" ");
+    }
+
+    const page = parseInt(request.query.page) || 1;
+    const limit = parseInt(request.query.limit) || 2;
+    const skip = (page - 1) * limit;
+
+    const movies = await Movie.find(filter)
+      .select(selectObject)
       .populate({
         path: "directors",
         select: ["name", "birthDate", "moviesDirected", "retired"],
-      });
+      })
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limit);
 
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
