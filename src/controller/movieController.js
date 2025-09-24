@@ -107,7 +107,7 @@ const getMoviesByDirectorId = async (request, response) => {
 
 const createMovies = async (request, response) => {
   try {
-    const { movie } = request.body;
+    const movie = request.body;
 
     const director = await Director.findById(movie.directors);
 
