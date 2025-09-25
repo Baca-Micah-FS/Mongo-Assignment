@@ -109,6 +109,7 @@ const createMovies = async (request, response) => {
   try {
     const movie = request.body;
 
+    // if(movie.directos){
     const director = await Director.findById(movie.directors);
 
     movie.directors = director;
@@ -121,6 +122,7 @@ const createMovies = async (request, response) => {
 
     await Promise.all(queries);
 
+    // }
     const movieResult = await Movie.findById(movieData._id)
       .select(["title", "rating", "genre", "releaseDate", "directors"])
       .populate({
@@ -134,6 +136,7 @@ const createMovies = async (request, response) => {
       data: movieResult,
     });
   } catch (error) {
+    console.log(error);
     response.status(400).json({ message: Messages.badRequest, success: false });
   }
 };
