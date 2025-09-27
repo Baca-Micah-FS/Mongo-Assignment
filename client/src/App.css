@@ -1,8 +1,19 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
+}
+
+table,
+th,
+td {
+  border: 1px solid;
+}
+
+th {
+  background-color: #000000;
+  color: white;
 }
 
 .logo {
@@ -34,7 +45,7 @@
 }
 
 .card {
-  padding: 2em;
+  /* padding: 2em; */
 }
 
 .read-the-docs {

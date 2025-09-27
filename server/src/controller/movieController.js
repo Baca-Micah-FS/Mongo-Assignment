@@ -28,7 +28,7 @@ const getAllMovies = async (request, response) => {
     }
 
     const page = parseInt(request.query.page) || 1;
-    const limit = parseInt(request.query.limit) || 2;
+    const limit = parseInt(request.query.limit) || 8;
     const skip = (page - 1) * limit;
 
     const movies = await Movie.find(filter)
@@ -40,6 +40,8 @@ const getAllMovies = async (request, response) => {
       .sort(sortObject)
       .skip(skip)
       .limit(limit);
+
+    console.log(movies);
 
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
@@ -109,27 +111,39 @@ const createMovies = async (request, response) => {
   try {
     const movie = request.body;
 
-    // if(movie.directos){
-    const director = await Director.findById(movie.directors);
+    let movieResult;
 
-    movie.directors = director;
+    if (movie.directors) {
+      const director = await Director.findById(movie.directors);
 
-    const movieData = new Movie(movie);
+      movie.directors = director;
 
-    director.movies.push(movieData._id);
+      const movieData = new Movie(movie);
 
-    const queries = [movieData.save(), director.save()];
+      director.movies.push(movieData._id);
 
-    await Promise.all(queries);
+      const queries = [movieData.save(), director.save()];
 
-    // }
-    const movieResult = await Movie.findById(movieData._id)
-      .select(["title", "rating", "genre", "releaseDate", "directors"])
-      .populate({
-        path: "directors",
-        select: ["name", "birthDate", "moviesDirected", "retired"],
-      });
+      await Promise.all(queries);
 
+      movieResult = await Movie.findById(movieData._id)
+        .select(["title", "rating", "genre", "releaseDate", "directors"])
+        .populate({
+          path: "directors",
+          select: ["name", "birthDate", "moviesDirected", "retired"],
+        });
+    } else {
+      const movieData = new Movie(movie);
+
+      await movieData.save();
+
+      movieResult = await Movie.findById(movieData._id)
+        .select(["title", "rating", "genre", "releaseDate", "directors"])
+        .populate({
+          path: "directors",
+          select: ["name", "birthDate", "moviesDirected", "retired"],
+        });
+    }
     response.status(200).json({
       message: `${request.method} ${Messages.successfulMovieMessage}`,
       success: true,

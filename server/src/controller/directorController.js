@@ -23,7 +23,7 @@ const getAllDirectors = async (request, response) => {
     }
 
     const page = parseInt(request.query.page) || 1;
-    const limit = parseInt(request.query.limit) || 2;
+    const limit = parseInt(request.query.limit) || 8;
     const skip = (page - 1) * limit;
 
     const director = await Director.find(filter)
@@ -39,7 +39,7 @@ const getAllDirectors = async (request, response) => {
       .limit(limit);
     response.status(200).json({
       message: `${request.method} ${Messages.successfulDirectorMessage}`,
-      director: director,
+      directors: director,
       success: true,
     });
   } catch (error) {
@@ -92,9 +92,10 @@ const createDirectors = async (request, response) => {
     response.status(200).json({
       message: `${request.method} ${Messages.successfulDirectorMessage}`,
       success: true,
-      director: director,
+      data: director,
     });
   } catch (error) {
+    console.log(">>>", error);
     response.status(400).json({ message: Messages.badRequest, success: false });
   }
 };
