@@ -38,7 +38,8 @@ function App() {
         directors: e.target.director.value,
       });
 
-      setMovie((prevMovies) => [...prevMovies, movie.data.data]);
+      const [moviesRes] = await Promise.all([getMovies()]);
+      setMovie(moviesRes.data.movies);
     } catch (error) {}
   }
 
@@ -69,6 +70,28 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function deleteMovie(id) {
+    const deleteMovie = await axios.delete(
+      `http://localhost:3000/api/v1/movies/${id}`
+    );
+    const [moviesRes] = await Promise.all([getMovies()]);
+    setMovie(moviesRes.data.movies);
+  }
+
+  async function deleteDirector(id) {
+    const deleteDirector = await axios.delete(
+      `http://localhost:3000/api/v1/directors/${id}`
+    );
+
+    const [moviesRes, directorsRes] = await Promise.all([
+      getMovies(),
+      getDirectors(),
+    ]);
+
+    setDirector(directorsRes.data.directors);
+    setMovie(moviesRes.data.movies);
   }
 
   return (
@@ -105,6 +128,7 @@ function App() {
                 <td>Birthdate</td>
                 <td>Movies Directed</td>
                 <td>Retired?</td>
+                <td>Delete</td>
               </tr>
             </thead>
 
@@ -116,11 +140,22 @@ function App() {
                     <td>{new Date(d.birthDate).toLocaleDateString()}</td>
                     <td>{d.moviesDirected}</td>
                     {d.retired ? <td>Retired</td> : <td>Not retired</td>}
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => deleteDirector(d._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             )}
           </table>
+          <small>
+            * Deleting a director will delete all associated movies.
+          </small>
         </div>
       </div>
       {/*****  Movies Section *****/}
@@ -189,6 +224,7 @@ function App() {
                 <td>Rating</td>
                 <td>Genre</td>
                 <td>Director</td>
+                <td>Delete</td>
               </tr>
             </thead>
             {movie && (
@@ -203,6 +239,14 @@ function App() {
                       <td>{movie.rating}</td>
                       <td>{movie.genre}</td>
                       <td>{movie.directors.name}</td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => deleteMovie(movie._id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -242,6 +286,7 @@ const styles = {
     flexDirection: "row",
     padding: "12px",
     marginBottom: "24px",
+    marginTop: "12px",
     alignItems: "flex-start",
   },
 

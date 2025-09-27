@@ -139,6 +139,10 @@ const updateDirectors = async (request, response) => {
 
 const deleteDirectors = async (request, response) => {
   try {
+    const moviesResult = await Movie.deleteMany({
+      directors: request.params.id,
+    });
+
     const deleted = await Director.findByIdAndDelete(request.params.id);
     if (!deleted) {
       return response
